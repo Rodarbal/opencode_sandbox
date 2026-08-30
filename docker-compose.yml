@@ -1,0 +1,51 @@
+services:
+  agent:
+    build: .
+    container_name: opencode-agent
+    depends_on:
+      - proxy
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - HTTP_PROXY=http://proxy:3128
+      - HTTPS_PROXY=http://proxy:3128
+      - NO_PROXY=localhost,127.0.0.1
+    volumes:
+      # the ONLY host folder the agent can see
+      - ${AI_PROJECT_PATH}:/workspace
+      # opencode's own config/auth/session data - kept out of the
+      # ephemeral container layer so it survives a rebuild, but it's
+      # a Docker-managed volume, not a host folder, so it's still
+      # fully wiped by `docker compose down -v`
+      - opencode-config:/home/agent/.config/opencode
+      - opencode-data:/home/agent/.local/share/opencode
+    networks:
+      - internal
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    stdin_open: true
+    tty: true
+    restart: "no"
+
+  proxy:
+    image: ubuntu/squid:latest
+    container_name: opencode-proxy
+    volumes:
+      - ./proxy/squid.conf:/etc/squid/squid.conf:ro
+    networks:
+      - internal
+      - external
+    restart: unless-stopped
+
+networks:
+  # no default gateway to the internet - the agent container is
+  # physically incapable of reaching anything except the proxy
+  internal:
+    internal: true
+  # normal bridge network, only the proxy container touches this
+  external: {}
+
+volumes:
+  opencode-config:
+  opencode-data:
