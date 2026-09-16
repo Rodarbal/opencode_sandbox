@@ -32,7 +32,7 @@ A locked-down Docker setup for running the [opencode](https://opencode.ai) agent
 
 ## Usage
 ```bash
-docker compose up -d --build
+docker compose up -d
 ```
 
 ```bash
