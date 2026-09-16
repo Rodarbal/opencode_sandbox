@@ -30,6 +30,11 @@ A locked-down Docker setup for running the [opencode](https://opencode.ai) agent
    docker compose run --rm agent run "your prompt here"
    ```
 
+## Usage
+docker compose up -d --build
+
+docker compose exec agent opencode
+
 ## Verifying the sandbox
 
 - Confirm no host access: `docker compose exec agent ls /` should show only the container's own filesystem, and `ls /workspace` should show only your `AI_Project` contents.
