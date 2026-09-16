@@ -38,6 +38,10 @@ docker compose up -d --build
 ```bash
 docker compose exec agent opencode
 ```
+
+```bash
+docker compose down
+```
 ## Verifying the sandbox
 
 - Confirm no host access: `docker compose exec agent ls /` should show only the container's own filesystem, and `ls /workspace` should show only your `AI_Project` contents.
